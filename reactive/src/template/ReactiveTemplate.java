@@ -138,11 +138,17 @@ public class ReactiveTemplate implements ReactiveBehavior {
 				for(int k=0; k<this.numStates; k++) {
 					nextStateList.add(0.0);
 				}
+				double non_null_prob = 0.0;
 				for(City taskTarget: topology) {
 					double probability = td.probability(action.nextCity, taskTarget);
 					State nextState = new State(action.nextCity, taskTarget);
 					nextStateList.set(nextState.id(), probability);
+					non_null_prob += probability;
 				}
+				// add null probability
+				State nullState = new State(action.nextCity, null);
+				nextStateList.set(nullState.id(), 1.0-non_null_prob);
+				
 				actionList.set(aID, nextStateList);
 			}
 			this.transitionProbabilityTable.add(actionList);
@@ -168,7 +174,7 @@ public class ReactiveTemplate implements ReactiveBehavior {
 					double qValue = this.rewardTable.get(i).get(a.id());
 					for(int k=0; k<this.numStates; k++) {
 						double transProb = this.transitionProbabilityTable.get(i).get(a.id()).get(k);
-						qValue+=(transProb*stateValueCopy.get(k));
+						qValue+=discount*(transProb*stateValueCopy.get(k));
 					}
 					if(qValue>maxValue) {
 						maxValue = qValue;
@@ -233,7 +239,7 @@ public class ReactiveTemplate implements ReactiveBehavior {
 				0.95);
 
 		// run value iteration algorithm to determine optimal policy
-		double threshold = 0.00000001;
+		double threshold = 0.00000000000001;
 		this.valueIteration(discount, threshold);
 
 		this.random = new Random();
