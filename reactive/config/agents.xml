@@ -9,5 +9,10 @@
 		<set class-name="template.ReactiveTemplate"/>
 		<set discount-factor=".85"/>
 	</agent>
-	
+	<agent name="reactive-rla">
+		<set class-path="bin/"></set>
+		<set class-name="ReactiveAgent"></set>
+		<set discount-factor=".95"></set>
+		<set threshold="0.00000000000001"><!--Threshold for change in state values (L2 Norm) to stop iterations--></set></agent>
+
 </agents>
